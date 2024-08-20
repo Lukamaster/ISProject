@@ -19,6 +19,7 @@ namespace ISProject.Service.Implementation
 
         public MusicRecord CreateRecord(MusicRecord record)
         {
+            record.Id = Guid.NewGuid();
             return recordRepository.Insert(record);
         }
 
