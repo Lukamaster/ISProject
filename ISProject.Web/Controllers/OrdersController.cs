@@ -10,6 +10,8 @@ using ISProject.Repository;
 using ISProject.Service.Interface;
 using Microsoft.AspNetCore.Authorization;
 using ISProject.Service.Implementation;
+using Microsoft.AspNetCore.Identity;
+using ISProject.Domain.Identity;
 
 namespace ISProject.Web.Controllers
 {
@@ -17,10 +19,12 @@ namespace ISProject.Web.Controllers
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
+        private readonly UserManager<MusicStoreUser> _userManager;
 
-        public OrdersController(IOrderService orderService)
+        public OrdersController(IOrderService orderService, UserManager<MusicStoreUser> userManager)
         {
             _orderService = orderService;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
@@ -60,6 +64,20 @@ namespace ISProject.Web.Controllers
 
             return View(order);
         }
+
+        public async Task<IActionResult> CreateOrder(Guid cartId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _orderService.CreateOrder(user, cartId);
+            return RedirectToAction(nameof(Index));
+        }
+
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

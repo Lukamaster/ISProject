@@ -18,16 +18,26 @@ namespace ISProject.Repository.Implementation
             _context = context;
         }
         public async Task<ShoppingCart> AddProductToCart(ShoppingCart cart, MusicRecord record)
-        { 
+        {
             if (cart != null && record != null)
             {
-                _context.MusicRecordsInShoppingCart.Add(new MusicRecordInShoppingCart
+                if (cart.MusicRecordsInShoppingCart != null && cart.MusicRecordsInShoppingCart.Any(r => r.MusicRecordId == record.Id))
                 {
-                    MusicRecordId = record.Id,
-                    ShoppingCartId = cart.Id,
-                    MusicRecord = record,
-                });
+                    var recordInCart = cart.MusicRecordsInShoppingCart.FirstOrDefault(r => r.MusicRecordId == record.Id);
+                    recordInCart.Quantity++;
+                }
+                else
+                {
+                    var addedRecord = new MusicRecordInShoppingCart
+                    {
+                        MusicRecordId = record.Id,
+                        ShoppingCartId = cart.Id,
+                        MusicRecord = record,
+                        ShoppingCart = cart
+                    };
 
+                    _context.MusicRecordsInShoppingCart.Add(addedRecord);
+                }
                 await _context.SaveChangesAsync();
                 return cart;
             }
@@ -37,11 +47,17 @@ namespace ISProject.Repository.Implementation
             }
         }
 
+        public async Task ClearCartAfterOrder(ShoppingCart cart)
+        {
+            cart.MusicRecordsInShoppingCart = null;
+        }
+
         public async Task<ShoppingCart> GetCart(Guid Id)
         {
             var cart = await _context.ShoppingCarts
                 .Where(c => c.Id == Id)
                 .Include(c => c.MusicRecordsInShoppingCart)
+                .ThenInclude(r => r.MusicRecord)
                 .FirstOrDefaultAsync() ?? throw new KeyNotFoundException("Cart not found");
             return cart;
         }
@@ -51,6 +67,7 @@ namespace ISProject.Repository.Implementation
             var cart = await _context.ShoppingCarts
                 .Where(c => c.OwnerId == userId)
                 .Include(c => c.MusicRecordsInShoppingCart)
+                .ThenInclude(r => r.MusicRecord)
                 .FirstOrDefaultAsync() ?? throw new KeyNotFoundException("Cart not found");
             return cart;
         }

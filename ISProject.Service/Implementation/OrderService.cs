@@ -1,4 +1,5 @@
 ﻿using ISProject.Domain;
+using ISProject.Domain.Identity;
 using ISProject.Repository.Interface;
 using ISProject.Service.Interface;
 using System;
@@ -12,10 +13,19 @@ namespace ISProject.Service.Implementation
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IShoppingCartRepository _shoppingCartRepository;
 
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(IOrderRepository orderRepository, IShoppingCartRepository shoppingCartRepository)
         {
             _orderRepository = orderRepository;
+            _shoppingCartRepository = shoppingCartRepository;
+        }
+
+        public async Task<Order> CreateOrder(MusicStoreUser user, Guid cartId)
+        {
+            var cart = await _shoppingCartRepository.GetCart(cartId);
+            var order = await _orderRepository.CreateOrder(user, cart);
+            return order;
         }
 
         public async Task DeleteOrder(Guid Id)

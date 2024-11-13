@@ -11,14 +11,61 @@
     <h4>Order</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Owner)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Owner.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Owner.FirstName)
         </dd>
     </dl>
 </div>
+
+@if (Model.MusicRecordsInOrder != null && Model.MusicRecordsInOrder.Any())
+{
+    <h4>Music Records in Order</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.MusicRecordsInOrder.First().MusicRecord.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MusicRecordsInOrder.First().MusicRecord.Artist)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MusicRecordsInOrder.First().Quantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MusicRecordsInOrder.First().MusicRecord.Price)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.MusicRecordsInOrder)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MusicRecord.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MusicRecord.Artist)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MusicRecord.Price)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No music records in the order.</p>
+}
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>

@@ -151,18 +151,7 @@ namespace ISProject.Web.Controllers
 
             if (musicRecord != null && user != null)
             {
-                var userCart = await _shoppingCartService.GetShoppingCartDetails(user.Id);
-
-                if(userCart.MusicRecordsInShoppingCart.Any(r => r.MusicRecordId == musicRecord.Id))
-                {
-                    var recordInCart = userCart.MusicRecordsInShoppingCart.FirstOrDefault(r => r.MusicRecordId == musicRecord.Id);
-                    recordInCart.Quantity++;
-                }
-                else
-                {
-                    userCart = await _shoppingCartService.AddProductToShoppingCart(user.Id, musicRecord);
-                }
-
+                await _shoppingCartService.AddProductToShoppingCart(user.Id, musicRecord);
             }
             return RedirectToAction(nameof(Index));
         }

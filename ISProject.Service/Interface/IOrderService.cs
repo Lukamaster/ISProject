@@ -1,4 +1,5 @@
 ﻿using ISProject.Domain;
+using ISProject.Domain.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace ISProject.Service.Interface
         Task<List<Order>> GetOrders();
         Task<Order> GetOrderDetails(Guid Id);
         Task DeleteOrder(Guid Id);
+        Task<Order> CreateOrder(MusicStoreUser user, Guid cartId);
     }
 }

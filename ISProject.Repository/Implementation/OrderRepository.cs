@@ -1,4 +1,5 @@
 ﻿using ISProject.Domain;
+using ISProject.Domain.Identity;
 using ISProject.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -25,9 +26,8 @@ namespace ISProject.Repository.Implementation
             return await Orders
                 .Include(o => o.MusicRecordsInOrder)
                     .ThenInclude(ro => ro.MusicRecord)
-                 .Include(o => o.MusicRecordsInOrder)
-                 .ThenInclude(ro => ro.Quantity)
-                 .ToListAsync();
+                 .ToListAsync() ??
+                 throw new KeyNotFoundException("No orders found");
         }
 
         public async Task<Order?> GetOrderDetails(Guid Id)
@@ -36,18 +36,38 @@ namespace ISProject.Repository.Implementation
                 .Where(o => o.Id == Id)
                 .Include(o => o.MusicRecordsInOrder)
                     .ThenInclude(ro => ro.MusicRecord)
-                 .Include(o => o.MusicRecordsInOrder)
-                 .ThenInclude(ro => ro.Quantity)
-                 .FirstOrDefaultAsync();
+                 .FirstOrDefaultAsync() ??
+                 throw new KeyNotFoundException("Order not found");
         }
 
         public async Task DeleteOrder(Guid Id)
         {
             var order = await Orders
                 .Where(o => o.Id == Id)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync()
+                ?? throw new Exception("Order not found");
+
             Orders.Remove(order);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Order> CreateOrder(MusicStoreUser user, ShoppingCart cart)
+        {
+            var order = new Order
+            {
+                Owner = user,
+                OwnerId = user.Id,
+                MusicRecordsInOrder = cart.MusicRecordsInShoppingCart
+                    .Select(r => new MusicRecordInOrder
+                    {
+                        MusicRecord = r.MusicRecord,
+                        Quantity = r.Quantity
+                    }).ToList()
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            return order;
         }
     }
 }
