@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ISProject.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class addedDbSets : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,7 +55,7 @@ namespace ISProject.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "musicRecords",
+                name: "MusicRecords",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -65,11 +65,11 @@ namespace ISProject.Repository.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     Volume = table.Column<int>(type: "int", nullable: false),
                     InStock = table.Column<bool>(type: "bit", nullable: false),
-                    ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_musicRecords", x => x.Id);
+                    table.PrimaryKey("PK_MusicRecords", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -179,7 +179,7 @@ namespace ISProject.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "orders",
+                name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -187,16 +187,16 @@ namespace ISProject.Repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_orders", x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_orders_AspNetUsers_OwnerId",
+                        name: "FK_Orders_AspNetUsers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "shoppingCarts",
+                name: "ShoppingCarts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -204,16 +204,16 @@ namespace ISProject.Repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_shoppingCarts", x => x.Id);
+                    table.PrimaryKey("PK_ShoppingCarts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_shoppingCarts_AspNetUsers_OwnerId",
+                        name: "FK_ShoppingCarts_AspNetUsers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "musicRecordsInOrder",
+                name: "MusicRecordsInOrder",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -223,45 +223,41 @@ namespace ISProject.Repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_musicRecordsInOrder", x => x.Id);
+                    table.PrimaryKey("PK_MusicRecordsInOrder", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_musicRecordsInOrder_musicRecords_MusicRecordId",
+                        name: "FK_MusicRecordsInOrder_MusicRecords_MusicRecordId",
                         column: x => x.MusicRecordId,
-                        principalTable: "musicRecords",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "MusicRecords",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_musicRecordsInOrder_orders_OrderId",
+                        name: "FK_MusicRecordsInOrder_Orders_OrderId",
                         column: x => x.OrderId,
-                        principalTable: "orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "Orders",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "musicRecordsInShoppingCart",
+                name: "MusicRecordsInShoppingCart",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MusicRecordID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MusicRecordId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ShoppingCartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_musicRecordsInShoppingCart", x => x.Id);
+                    table.PrimaryKey("PK_MusicRecordsInShoppingCart", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_musicRecordsInShoppingCart_musicRecords_MusicRecordID",
-                        column: x => x.MusicRecordID,
-                        principalTable: "musicRecords",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_MusicRecordsInShoppingCart_MusicRecords_MusicRecordId",
+                        column: x => x.MusicRecordId,
+                        principalTable: "MusicRecords",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_musicRecordsInShoppingCart_shoppingCarts_ShoppingCartId",
-                        column: x => x.ShoppingCartId,
-                        principalTable: "shoppingCarts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_MusicRecordsInShoppingCart_ShoppingCarts_Id",
+                        column: x => x.Id,
+                        principalTable: "ShoppingCarts",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -304,33 +300,28 @@ namespace ISProject.Repository.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_musicRecordsInOrder_MusicRecordId",
-                table: "musicRecordsInOrder",
+                name: "IX_MusicRecordsInOrder_MusicRecordId",
+                table: "MusicRecordsInOrder",
                 column: "MusicRecordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_musicRecordsInOrder_OrderId",
-                table: "musicRecordsInOrder",
+                name: "IX_MusicRecordsInOrder_OrderId",
+                table: "MusicRecordsInOrder",
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_musicRecordsInShoppingCart_MusicRecordID",
-                table: "musicRecordsInShoppingCart",
-                column: "MusicRecordID");
+                name: "IX_MusicRecordsInShoppingCart_MusicRecordId",
+                table: "MusicRecordsInShoppingCart",
+                column: "MusicRecordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_musicRecordsInShoppingCart_ShoppingCartId",
-                table: "musicRecordsInShoppingCart",
-                column: "ShoppingCartId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_orders_OwnerId",
-                table: "orders",
+                name: "IX_Orders_OwnerId",
+                table: "Orders",
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_shoppingCarts_OwnerId",
-                table: "shoppingCarts",
+                name: "IX_ShoppingCarts_OwnerId",
+                table: "ShoppingCarts",
                 column: "OwnerId",
                 unique: true,
                 filter: "[OwnerId] IS NOT NULL");
@@ -355,22 +346,22 @@ namespace ISProject.Repository.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "musicRecordsInOrder");
+                name: "MusicRecordsInOrder");
 
             migrationBuilder.DropTable(
-                name: "musicRecordsInShoppingCart");
+                name: "MusicRecordsInShoppingCart");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "orders");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "musicRecords");
+                name: "MusicRecords");
 
             migrationBuilder.DropTable(
-                name: "shoppingCarts");
+                name: "ShoppingCarts");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

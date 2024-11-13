@@ -9,10 +9,10 @@ namespace ISProject.Repository.Interface
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        IEnumerable<T> GetAll();
-        T Get(Guid? id);
-        T Insert(T entity);
-        T Update(T entity);
-        T Delete(T entity);
+        Task<List<T>> GetAll();
+        Task<T> Get(Guid? id);
+        Task<T> Insert(T entity);
+        Task<T> Update(T entity);
+        Task<T> Delete(T entity);
     }
 }

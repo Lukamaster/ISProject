@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISProject.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240820134719_addedDbSets")]
-    partial class addedDbSets
+    [Migration("20241112112031_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,6 @@ namespace ISProject.Repository.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("InStock")
@@ -58,7 +57,7 @@ namespace ISProject.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("musicRecords");
+                    b.ToTable("MusicRecords");
                 });
 
             modelBuilder.Entity("ISProject.Domain.MusicRecordInOrder", b =>
@@ -82,16 +81,15 @@ namespace ISProject.Repository.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("musicRecordsInOrder");
+                    b.ToTable("MusicRecordsInOrder");
                 });
 
             modelBuilder.Entity("ISProject.Domain.MusicRecordInShoppingCart", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("MusicRecordID")
+                    b.Property<Guid>("MusicRecordId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -102,11 +100,9 @@ namespace ISProject.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MusicRecordID");
+                    b.HasIndex("MusicRecordId");
 
-                    b.HasIndex("ShoppingCartId");
-
-                    b.ToTable("musicRecordsInShoppingCart");
+                    b.ToTable("MusicRecordsInShoppingCart");
                 });
 
             modelBuilder.Entity("ISProject.Domain.Order", b =>
@@ -122,7 +118,7 @@ namespace ISProject.Repository.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("orders");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ISProject.Domain.ShoppingCart", b =>
@@ -140,7 +136,7 @@ namespace ISProject.Repository.Migrations
                         .IsUnique()
                         .HasFilter("[OwnerId] IS NOT NULL");
 
-                    b.ToTable("shoppingCarts");
+                    b.ToTable("ShoppingCarts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -378,13 +374,13 @@ namespace ISProject.Repository.Migrations
                     b.HasOne("ISProject.Domain.MusicRecord", "MusicRecord")
                         .WithMany("MusicRecordInOrders")
                         .HasForeignKey("MusicRecordId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("ISProject.Domain.Order", "Order")
                         .WithMany("MusicRecordsInOrder")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("MusicRecord");
@@ -394,16 +390,16 @@ namespace ISProject.Repository.Migrations
 
             modelBuilder.Entity("ISProject.Domain.MusicRecordInShoppingCart", b =>
                 {
-                    b.HasOne("ISProject.Domain.MusicRecord", "MusicRecord")
-                        .WithMany("MusicRecordsInShoppingCart")
-                        .HasForeignKey("MusicRecordID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ISProject.Domain.ShoppingCart", "ShoppingCart")
                         .WithMany("MusicRecordsInShoppingCart")
-                        .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("ISProject.Domain.MusicRecord", "MusicRecord")
+                        .WithMany("MusicRecordsInShoppingCart")
+                        .HasForeignKey("MusicRecordId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("MusicRecord");

@@ -20,22 +20,34 @@ namespace ISProject.Repository.Implementation
             Orders = context.Set<Order>();
         }
 
-        public ICollection<Order> GetAll()
+        public async Task<List<Order>> GetAll()
         {
-            return Orders.
-                Include(z => z.MusicRecordsInOrder).
-                Include("MusicRecordsInOrder.MusicRecord").
-                Include("MusicRecordsInOrder.Quantity").
-                ToList();
+            return await Orders
+                .Include(o => o.MusicRecordsInOrder)
+                    .ThenInclude(ro => ro.MusicRecord)
+                 .Include(o => o.MusicRecordsInOrder)
+                 .ThenInclude(ro => ro.Quantity)
+                 .ToListAsync();
         }
 
-        public Order? GetOrderDetails(BaseEntity entity)
+        public async Task<Order?> GetOrderDetails(Guid Id)
         {
-            return Orders.
-                Include(z => z.MusicRecordsInOrder).
-                Include("MusicRecordsInOrder.MusicRecord").
-                Include("MusicRecordsInOrder.Quantity").
-                SingleOrDefaultAsync(z => z.Id == entity.Id).Result;
+            return await Orders
+                .Where(o => o.Id == Id)
+                .Include(o => o.MusicRecordsInOrder)
+                    .ThenInclude(ro => ro.MusicRecord)
+                 .Include(o => o.MusicRecordsInOrder)
+                 .ThenInclude(ro => ro.Quantity)
+                 .FirstOrDefaultAsync();
+        }
+
+        public async Task DeleteOrder(Guid Id)
+        {
+            var order = await Orders
+                .Where(o => o.Id == Id)
+                .FirstOrDefaultAsync();
+            Orders.Remove(order);
+            await _context.SaveChangesAsync();
         }
     }
 }

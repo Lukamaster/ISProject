@@ -18,14 +18,21 @@ namespace ISProject.Service.Implementation
             _orderRepository = orderRepository;
         }
 
-        public Order GetOrderDetails(BaseEntity entity)
+        public async Task DeleteOrder(Guid Id)
         {
-            return _orderRepository.GetOrderDetails(entity);
+            await _orderRepository.DeleteOrder(Id);
         }
 
-        public List<Order> GetOrders()
+        public async Task<Order> GetOrderDetails(Guid Id)
         {
-            return _orderRepository.GetAll().ToList();
+            var order = await _orderRepository.GetOrderDetails(Id);
+            return order;
+        }
+
+        public async Task<List<Order>> GetOrders()
+        {
+            var orders = await _orderRepository.GetAll();
+            return orders;
         }
     }
 }

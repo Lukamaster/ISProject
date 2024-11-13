@@ -9,7 +9,8 @@ namespace ISProject.Repository.Interface
 {
     public interface IOrderRepository
     {
-        ICollection<Order> GetAll();
-        Order? GetOrderDetails(BaseEntity entity);
+        Task<List<Order>> GetAll();
+        Task<Order> GetOrderDetails(Guid Id);
+        Task DeleteOrder(Guid Id);
     }
 }

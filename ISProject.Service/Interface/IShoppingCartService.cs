@@ -1,4 +1,5 @@
 ﻿using ISProject.Domain;
+using ISProject.Domain.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,9 @@ namespace ISProject.Service.Interface
 {
     public interface IShoppingCartService
     {
-        ShoppingCart AddProductToShoppingCart(string userId, AddToCartDTO model);
-        AddToCartDTO getProductInfo(Guid Id);
-        ShoppingCartDTO getShoppingCartDetails(string userId);
-        Boolean deleteFromShoppingCart(string userId, Guid? Id);
-        Boolean orderProducts(string userId);
-
-
+        Task<ShoppingCart> AddProductToShoppingCart(string userId, MusicRecord record);
+        Task<ShoppingCart> GetShoppingCartDetails(string userId);
+        Task DeleteFromShoppingCart(string userId, Guid productId);
+        //Boolean orderProducts(string userId);
     }
 }

@@ -9,7 +9,8 @@ namespace ISProject.Service.Interface
 {
     public interface IOrderService
     {
-        List<Order> GetOrders();
-        Order GetOrderDetails(BaseEntity entity);
+        Task<List<Order>> GetOrders();
+        Task<Order> GetOrderDetails(Guid Id);
+        Task DeleteOrder(Guid Id);
     }
 }

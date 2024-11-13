@@ -14,8 +14,8 @@ namespace ISProject.Domain
         public double Price { get; set; }
         public int Volume { get; set; }
         public bool InStock { get; set; }
-        public string ImageURL { get; set; }
-        public ICollection<MusicRecordInOrder>? MusicRecordInOrders { get; set; }
+        public string? ImageURL { get; set; }
+        public virtual ICollection<MusicRecordInOrder>? MusicRecordInOrders { get; set; }
         public virtual ICollection<MusicRecordInShoppingCart>? MusicRecordsInShoppingCart { get; set; }
     }
 }

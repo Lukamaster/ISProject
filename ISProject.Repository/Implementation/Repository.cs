@@ -20,46 +20,46 @@ namespace ISProject.Repository.Implementation
             entities = context.Set<T>();
         }
 
-        public T Delete(T entity)
+        public async Task<T> Delete(T entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException("entity");
             }
             entities.Remove(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return entity;
         }
 
-        public T Get(Guid? id)
+        public async Task< T> Get(Guid? id)
         {
-            return entities.First(s => s.Id == id);
+            return await entities.FirstAsync(s => s.Id == id);
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<List<T>> GetAll()
         {
-            return entities.AsEnumerable();
+            return await entities.ToListAsync();
         }
 
-        public T Insert(T entity)
+        public async Task<T> Insert(T entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException("entity");
             }
             entities.Add(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return entity;
         }
 
-        public T Update(T entity)
+        public async Task<T> Update(T entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException("entity");
             }
             entities.Update(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return entity;
         }
     }

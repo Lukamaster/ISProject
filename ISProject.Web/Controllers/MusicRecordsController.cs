@@ -8,35 +8,42 @@ using Microsoft.EntityFrameworkCore;
 using ISProject.Domain;
 using ISProject.Repository;
 using ISProject.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
+using System.Runtime.CompilerServices;
+using ISProject.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace ISProject.Web.Controllers
 {
+    [Authorize]
     public class MusicRecordsController : Controller
     {
-        
+        private readonly UserManager<MusicStoreUser> _userManager;
         private readonly IMusicRecordService _musicRecordService;
+        private readonly IShoppingCartService _shoppingCartService;
 
-        public MusicRecordsController(IMusicRecordService musicRecordService)
+        public MusicRecordsController(IMusicRecordService musicRecordService, UserManager<MusicStoreUser> userManager, IShoppingCartService shoppingCartService)
         {
             _musicRecordService = musicRecordService;
+            _userManager = userManager;
+            _shoppingCartService = shoppingCartService;
         }
-        
 
-        // GET: MusicRecords
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(_musicRecordService.GetAll());
+            var musicRecords = await _musicRecordService.GetAll();
+            return View(musicRecords);
         }
 
-        // GET: MusicRecords/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var musicRecord = _musicRecordService.GetRecordById(id);
+            var musicRecord = await _musicRecordService.GetRecordById(id);
             if (musicRecord == null)
             {
                 return NotFound();
@@ -45,36 +52,31 @@ namespace ISProject.Web.Controllers
             return View(musicRecord);
         }
 
-        // GET: MusicRecords/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: MusicRecords/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Title,Description,Artist,Price,Volume,InStock,ImageURL,Id")] MusicRecord musicRecord)
         {
             if (ModelState.IsValid)
             {
-                _musicRecordService.CreateRecord(musicRecord);
+                await _musicRecordService.CreateRecord(musicRecord);
                 return RedirectToAction(nameof(Index));
             }
             return View(musicRecord);
         }
 
-        // GET: MusicRecords/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var musicRecord = _musicRecordService.GetRecordById(id) as MusicRecord;
+            var musicRecord = await _musicRecordService.GetRecordById(id);
             if (musicRecord == null)
             {
                 return NotFound();
@@ -82,9 +84,6 @@ namespace ISProject.Web.Controllers
             return View(musicRecord);
         }
 
-        // POST: MusicRecords/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Title,Description,Artist,Price,Volume,InStock,ImageURL,Id")] MusicRecord musicRecord)
@@ -98,7 +97,7 @@ namespace ISProject.Web.Controllers
             {
                 try
                 {
-                    _musicRecordService.UpdateRecord(musicRecord);
+                    await _musicRecordService.UpdateRecord(musicRecord);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,15 +115,14 @@ namespace ISProject.Web.Controllers
             return View(musicRecord);
         }
 
-        // GET: MusicRecords/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var musicRecord = _musicRecordService.GetRecordById(id);
+            var musicRecord = await _musicRecordService.GetRecordById(id);
             if (musicRecord == null)
             {
                 return NotFound();
@@ -133,24 +131,46 @@ namespace ISProject.Web.Controllers
             return View(musicRecord);
         }
 
-        // POST: MusicRecords/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             
-            var musicRecord = _musicRecordService.GetRecordById(id);
+            var musicRecord = await _musicRecordService.GetRecordById(id);
             if (musicRecord != null)
             {
-                _musicRecordService.DeleteRecord(musicRecord.Id);
+                await _musicRecordService.DeleteRecordAsync(musicRecord.Id);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> AddToCart(Guid id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var musicRecord = await _musicRecordService.GetRecordById(id);
+
+            if (musicRecord != null && user != null)
+            {
+                var userCart = await _shoppingCartService.GetShoppingCartDetails(user.Id);
+
+                if(userCart.MusicRecordsInShoppingCart.Any(r => r.MusicRecordId == musicRecord.Id))
+                {
+                    var recordInCart = userCart.MusicRecordsInShoppingCart.FirstOrDefault(r => r.MusicRecordId == musicRecord.Id);
+                    recordInCart.Quantity++;
+                }
+                else
+                {
+                    userCart = await _shoppingCartService.AddProductToShoppingCart(user.Id, musicRecord);
+                }
+
             }
             return RedirectToAction(nameof(Index));
         }
 
         private bool MusicRecordExists(Guid id)
         {
-            
-            return _musicRecordService.GetAll().Any(e => e.Id == id);
+            var musicRecords = _musicRecordService.GetAll().GetAwaiter().GetResult();
+            return musicRecords.Any(r => r.Id == id);
         }
     }
 }

@@ -17,30 +17,29 @@ namespace ISProject.Service.Implementation
             this.recordRepository = recordRepository;
         }
 
-        public MusicRecord CreateRecord(MusicRecord record)
+        public async Task<MusicRecord> CreateRecord(MusicRecord record)
         {
-            record.Id = Guid.NewGuid();
-            return recordRepository.Insert(record);
+            return await recordRepository.Insert(record);
         }
 
-        public MusicRecord DeleteRecord(Guid? id)
+        public async Task<MusicRecord> DeleteRecordAsync(Guid id)
         {
-            return recordRepository.Delete(recordRepository.Get(id));
+            return await recordRepository.Delete(await recordRepository.Get(id));
         }
 
-        public List<MusicRecord> GetAll()
+        public async Task<List<MusicRecord>> GetAll()
         {
-            return recordRepository.GetAll().ToList();
+            return await recordRepository.GetAll();
         }
 
-        public MusicRecord GetRecordById(Guid? id)
+        public async Task<MusicRecord> GetRecordById(Guid id)
         {
-            return recordRepository.Get(id);
+            return await recordRepository.Get(id);
         }
 
-        public MusicRecord UpdateRecord(MusicRecord record)
+        public async Task<MusicRecord> UpdateRecord(MusicRecord record)
         {
-            return recordRepository.Update(record);
+            return await recordRepository.Update(record);
         }
     }
 }

@@ -9,10 +9,10 @@ namespace ISProject.Service.Interface
 {
     public interface IMusicRecordService
     {
-        public List<MusicRecord> GetAll();
-        public MusicRecord GetRecordById(Guid? id);
-        public MusicRecord CreateRecord(MusicRecord record);
-        public MusicRecord UpdateRecord(MusicRecord record);
-        public MusicRecord DeleteRecord(Guid? id);
+        public Task<List<MusicRecord>> GetAll();
+        public Task<MusicRecord> GetRecordById(Guid id);
+        public Task<MusicRecord> CreateRecord(MusicRecord record);
+        public Task<MusicRecord> UpdateRecord(MusicRecord record);
+        public Task<MusicRecord> DeleteRecordAsync(Guid id);
     }
 }
