@@ -20,7 +20,7 @@ namespace ISProject.Repository.Implementation
             entities = context.Set<T>();
         }
 
-        public async Task<T> Delete(T entity)
+        public async Task Delete(T entity)
         {
             if (entity == null)
             {
@@ -28,7 +28,6 @@ namespace ISProject.Repository.Implementation
             }
             entities.Remove(entity);
             await _context.SaveChangesAsync();
-            return entity;
         }
 
         public async Task< T> Get(Guid? id)

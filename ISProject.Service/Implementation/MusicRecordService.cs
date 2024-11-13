@@ -22,9 +22,9 @@ namespace ISProject.Service.Implementation
             return await recordRepository.Insert(record);
         }
 
-        public async Task<MusicRecord> DeleteRecordAsync(Guid id)
+        public async Task DeleteRecordAsync(Guid id)
         {
-            return await recordRepository.Delete(await recordRepository.Get(id));
+            await recordRepository.Delete(await recordRepository.Get(id));
         }
 
         public async Task<List<MusicRecord>> GetAll()

@@ -13,6 +13,6 @@ namespace ISProject.Service.Interface
         public Task<MusicRecord> GetRecordById(Guid id);
         public Task<MusicRecord> CreateRecord(MusicRecord record);
         public Task<MusicRecord> UpdateRecord(MusicRecord record);
-        public Task<MusicRecord> DeleteRecordAsync(Guid id);
+        public Task DeleteRecordAsync(Guid id);
     }
 }

@@ -13,6 +13,6 @@ namespace ISProject.Repository.Interface
         Task<T> Get(Guid? id);
         Task<T> Insert(T entity);
         Task<T> Update(T entity);
-        Task<T> Delete(T entity);
+        Task Delete(T entity);
     }
 }

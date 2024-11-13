@@ -13,6 +13,5 @@ namespace ISProject.Repository.Interface
         Task<ShoppingCart> GetCartByUserId(string userId);
         Task<ShoppingCart> AddProductToCart(ShoppingCart cart, MusicRecord record);
         Task RemoveProductFromCart(Guid cartId, Guid productId);
-        Task ClearCartAfterOrder(ShoppingCart cart);
     }
 }

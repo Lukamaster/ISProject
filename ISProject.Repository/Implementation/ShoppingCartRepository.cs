@@ -47,11 +47,6 @@ namespace ISProject.Repository.Implementation
             }
         }
 
-        public async Task ClearCartAfterOrder(ShoppingCart cart)
-        {
-            cart.MusicRecordsInShoppingCart = null;
-        }
-
         public async Task<ShoppingCart> GetCart(Guid Id)
         {
             var cart = await _context.ShoppingCarts

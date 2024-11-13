@@ -26,6 +26,7 @@ namespace ISProject.Repository.Implementation
             return await Orders
                 .Include(o => o.MusicRecordsInOrder)
                     .ThenInclude(ro => ro.MusicRecord)
+                 .Include(o => o.Owner)
                  .ToListAsync() ??
                  throw new KeyNotFoundException("No orders found");
         }
@@ -36,8 +37,9 @@ namespace ISProject.Repository.Implementation
                 .Where(o => o.Id == Id)
                 .Include(o => o.MusicRecordsInOrder)
                     .ThenInclude(ro => ro.MusicRecord)
-                 .FirstOrDefaultAsync() ??
-                 throw new KeyNotFoundException("Order not found");
+                .Include(o => o.Owner)
+                .FirstOrDefaultAsync() ??
+                throw new KeyNotFoundException("Order not found");
         }
 
         public async Task DeleteOrder(Guid Id)
@@ -66,6 +68,7 @@ namespace ISProject.Repository.Implementation
             };
 
             _context.Orders.Add(order);
+            cart.MusicRecordsInShoppingCart = null;
             await _context.SaveChangesAsync();
             return order;
         }
