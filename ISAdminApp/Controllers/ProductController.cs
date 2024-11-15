@@ -18,7 +18,7 @@ namespace ISAdminApp.Controllers
 
             using (HttpClient client = new HttpClient())
             {
-                var response = client.GetAsync("https://localhost:44300/api/products").Result;
+                var response = client.GetAsync("https://localhost:7032/api/admin/products").Result;
                 var jsonString = response.Content.ReadAsStringAsync().Result;
                 products = JsonSerializer.Deserialize<List<Product>>(jsonString);
             }
@@ -32,7 +32,7 @@ namespace ISAdminApp.Controllers
 
             using (HttpClient client = new HttpClient())
             {
-                var response = client.GetAsync("https://localhost:44300/api/products").Result;
+                var response = client.GetAsync("https://localhost:7032/api/admin/products").Result;
                 var jsonString = response.Content.ReadAsStringAsync().Result;
                 products = JsonSerializer.Deserialize<List<Product>>(jsonString);
             }
