@@ -124,7 +124,7 @@ namespace ISAdminApp.Controllers
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    var response = await client.DeleteAsync($"https://localhost:44300/api/products/{id}");
+                    var response = await client.DeleteAsync($"https://localhost:7032/api/products/{id}");
                     response.EnsureSuccessStatusCode();
                 }
 

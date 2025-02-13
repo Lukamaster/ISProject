@@ -68,7 +68,7 @@ namespace ISAdminApp.Controllers
 
             using (HttpClient client = new HttpClient())
             {
-                var response = await client.GetAsync($"https://localhost:44300/api/admin/orders/{id}");
+                var response = await client.GetAsync($"https://localhost:7032/api/admin/orders/{id}");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
@@ -78,6 +78,9 @@ namespace ISAdminApp.Controllers
                     {
                         Id = (string?)jsonOrder["id"] ?? string.Empty,
                         OwnerId = (string?)jsonOrder["ownerId"] ?? string.Empty,
+                        OwnerFirstName = (string?)jsonOrder["owner"]?["firstName"] ?? string.Empty,
+                        OwnerLastName = (string?)jsonOrder["owner"]?["lastName"] ?? string.Empty,
+                        OwnerAddress = (string?)jsonOrder["owner"]?["address"] ?? string.Empty,
                         MusicRecordsInOrder = new List<Product>()
                     };
 

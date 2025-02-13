@@ -83,6 +83,13 @@ namespace ISProject.Web.Controllers
             var orders  = await _orderService.GetOrders();
             return Ok(orders);
         }
+
+        [HttpGet("orders/{id}")]
+        public async Task<IActionResult> ExportOrderById(Guid id)
+        {
+            var orders = await _orderService.GetOrderDetails(id);
+            return Ok(orders);
+        }
     }
 }
 
