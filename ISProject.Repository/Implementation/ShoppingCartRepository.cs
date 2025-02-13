@@ -17,13 +17,15 @@ namespace ISProject.Repository.Implementation
         {
             _context = context;
         }
+
         public async Task<ShoppingCart> AddProductToCart(ShoppingCart cart, MusicRecord record)
         {
             if (cart != null && record != null)
             {
                 if (cart.MusicRecordsInShoppingCart != null && cart.MusicRecordsInShoppingCart.Any(r => r.MusicRecordId == record.Id))
                 {
-                    var recordInCart = cart.MusicRecordsInShoppingCart.FirstOrDefault(r => r.MusicRecordId == record.Id);
+                    var recordInCart = cart.MusicRecordsInShoppingCart.FirstOrDefault(r => r.MusicRecordId == record.Id)
+                        ?? throw new KeyNotFoundException("Record not found");
                     recordInCart.Quantity++;
                 }
                 else
@@ -33,7 +35,8 @@ namespace ISProject.Repository.Implementation
                         MusicRecordId = record.Id,
                         ShoppingCartId = cart.Id,
                         MusicRecord = record,
-                        ShoppingCart = cart
+                        ShoppingCart = cart,
+                        Quantity = 1
                     };
 
                     _context.MusicRecordsInShoppingCart.Add(addedRecord);
@@ -52,7 +55,7 @@ namespace ISProject.Repository.Implementation
             var cart = await _context.ShoppingCarts
                 .Where(c => c.Id == Id)
                 .Include(c => c.MusicRecordsInShoppingCart)
-                .ThenInclude(r => r.MusicRecord)
+                    .ThenInclude(r => r.MusicRecord)
                 .FirstOrDefaultAsync() ?? throw new KeyNotFoundException("Cart not found");
             return cart;
         }
@@ -62,7 +65,7 @@ namespace ISProject.Repository.Implementation
             var cart = await _context.ShoppingCarts
                 .Where(c => c.OwnerId == userId)
                 .Include(c => c.MusicRecordsInShoppingCart)
-                .ThenInclude(r => r.MusicRecord)
+                    .ThenInclude(r => r.MusicRecord)
                 .FirstOrDefaultAsync() ?? throw new KeyNotFoundException("Cart not found");
             return cart;
         }

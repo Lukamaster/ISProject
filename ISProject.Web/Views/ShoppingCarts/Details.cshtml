@@ -5,24 +5,21 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
-
 <div>
-    <h4>ShoppingCart</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Owner)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Owner.FirstName)
+            @Html.DisplayFor(model => model.Owner.Email)
         </dd>
     </dl>
 </div>
 
 @if (Model.MusicRecordsInShoppingCart != null && Model.MusicRecordsInShoppingCart.Any())
 {
-    <h4>Music Records in Shopping Cart</h4>
+    <h4>Products in Cart:</h4>
     <table class="table">
         <thead>
             <tr>
@@ -56,6 +53,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.MusicRecord.Price)
                     </td>
+                    <td>
+                        <a asp-action="RemoveFromCart" asp-controller="MusicRecords" asp-route-id="@item.MusicRecord.Id">Remove</a>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -67,7 +67,5 @@ else
 }
 
 <div>
-    <a asp-action="CreateOrder" asp-controller="Orders" asp-route-cartId="@Model.Id">Create Order</a> |
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="CreateOrder" asp-controller="Orders" asp-route-cartId="@Model.Id">Order Now!</a>
 </div>

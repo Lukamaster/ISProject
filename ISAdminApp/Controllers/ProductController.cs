@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 namespace ISAdminApp.Controllers
@@ -16,11 +17,28 @@ namespace ISAdminApp.Controllers
         {
             List<Product> products = new List<Product>();
 
-            using (HttpClient client = new HttpClient())
+            try
             {
-                var response = client.GetAsync("https://localhost:44300/api/products").Result;
-                var jsonString = response.Content.ReadAsStringAsync().Result;
-                products = JsonSerializer.Deserialize<List<Product>>(jsonString);
+                using (HttpClient client = new HttpClient())
+                {
+                    var response = client.GetAsync("https://localhost:7032/api/admin/products").Result;
+                    response.EnsureSuccessStatusCode(); // Ensure the request was successful
+
+                    var jsonString = response.Content.ReadAsStringAsync().Result;
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                    };
+
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonString, options);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework here)
+                Console.WriteLine($"Error: {ex.Message}");
             }
 
             return View(products);
@@ -30,11 +48,28 @@ namespace ISAdminApp.Controllers
         {
             List<Product> products = new List<Product>();
 
-            using (HttpClient client = new HttpClient())
+            try
             {
-                var response = client.GetAsync("https://localhost:44300/api/products").Result;
-                var jsonString = response.Content.ReadAsStringAsync().Result;
-                products = JsonSerializer.Deserialize<List<Product>>(jsonString);
+                using (HttpClient client = new HttpClient())
+                {
+                    var response = client.GetAsync("https://localhost:7032/api/admin/products").Result;
+                    response.EnsureSuccessStatusCode(); // Ensure the request was successful
+
+                    var jsonString = response.Content.ReadAsStringAsync().Result;
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                    };
+
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonString, options);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework here)
+                Console.WriteLine($"Error: {ex.Message}");
             }
 
             using (var workbook = new XLWorkbook())
@@ -45,7 +80,9 @@ namespace ISAdminApp.Controllers
                 worksheet.Cell(currentRow, 1).Value = "Id";
                 worksheet.Cell(currentRow, 2).Value = "Name";
                 worksheet.Cell(currentRow, 3).Value = "Description";
-                worksheet.Cell(currentRow, 4).Value = "Price";
+                worksheet.Cell(currentRow, 4).Value = "Artist";
+                worksheet.Cell(currentRow, 5).Value = "Volume";
+                worksheet.Cell(currentRow, 6).Value = "Price";
 
                 foreach (var product in products)
                 {
@@ -68,9 +105,9 @@ namespace ISAdminApp.Controllers
         }
 
         // GET: ProductController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(Product prod)
         {
-            return View(id);
+            return View(prod);
         }
 
         // GET: ProductController/Delete/5

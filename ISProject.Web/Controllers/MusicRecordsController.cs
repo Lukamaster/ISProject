@@ -156,6 +156,16 @@ namespace ISProject.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> RemoveFromCart(Guid id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                await _shoppingCartService.DeleteFromShoppingCart(user.Id, id);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         private bool MusicRecordExists(Guid id)
         {
             var musicRecords = _musicRecordService.GetAll().GetAwaiter().GetResult();
